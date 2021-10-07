@@ -1,23 +1,50 @@
 #include <stdio.h>
 #include <string.h>
-
 #define MAX_LIMIT 100
 
-/** WARMUP **/
-// declare a string with value
-char hello[] = "Hello";
-// declare an empty string
-char name[MAX_LIMIT];
+int main() {
+    /** WARMUP **/
+    // declare a string with value
+    char hello[] = "Hello";
+    // declare an empty string
+    char name[MAX_LIMIT];
 
-// prompt user
-printf("What is your name? ");
+    char welcome[MAX_LIMIT];
 
-// read in a string from user and save in variable
-// [^\n] means to discard the newline character
-scanf("%[^\n]s", name);
+    // prompt user
+    printf("What is your name? ");
 
-// print out "hello <name>"
-printf("%s %s!\n\n", hello, name);
+    // read in a string from user and save in variable
+    // [^\n] means to discard the newline character
+    scanf("%[^\n]s", name);
 
-/** Exercise 1 **/ 
-char new_string[MAX_LIMIT];
+    // print out "hello <name>"
+    printf("%s %s!\n\n", hello, name);
+
+    /** Exercise 1 **/ 
+
+    strcpy(welcome, hello);
+    strcat(welcome, " ");
+    strcat(welcome, name);
+
+    printf("%s! \n", welcome);
+
+    /** Exercise 2 **/
+    printf("Your name is %zu characters long \n", strlen(name));
+
+    /** Exercise 3 **/
+    char prof[8] = {'P','a','t','r','i','c','k','\0'};
+
+    if (strcmp(name, prof) < 0) {
+        printf("%s is before %s\n", name, prof);
+    }
+    else if (strcmp(name, prof) > 0) {
+        printf("%s is after %s\n", name, prof);
+    }
+    else if (strcmp(name, prof) == 0) {
+        printf("%s is %s\n", name, prof);
+    }
+
+    return 0;
+}
+    
