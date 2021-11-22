@@ -39,5 +39,50 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    // FIRST MUX
+    Not(in=instruction[15], out=NOTinstr15);
+    Mux16(a= outALU, b= instruction, sel=NOTinstr15, out=outMux1);
+
+    // A
+    Or(a=NOTinstr15, b=instruction[5], out=Aload);
+    ARegister(in=outMux1, load=Aload,out= Aout, out[0..14] = addressM);
+
+    // SECOND MUX
+    And(a= instruction[15], b=instruction[12], out= AMsel);
+    Mux16(a=Aout, b=inM, sel= AMsel, out= AM);
+
+    // ALU
+     ALU(x=outD, y=AM, zx= instruction[11], nx=instruction[10], zy= instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6] ,out=outM, out=outALU, zr=zr,ng=ng); 
+
+    // D
+    And(a=instruction[15], b=instruction[4], out=Dload);
+    DRegister(in=outALU, load=Dload, out=outD);
+
+    // ZR
+    And(a=instruction[1], b=instruction[15], out=zrout);
+    And(a=zrout, b=zr, out=outzr);
+
+    // NG
+    And(a=instruction[2], b=instruction[15], out=ngout);
+    And(a=ng, b=ngout, out=outng);
+
+    // !ZR AND !NG
+    Not(in=zr, out=NOTzr);
+    Not(in=ng, out=NOTng);
+
+    And(a=instruction[0], b=instruction[15], out=outAND);
+    And(a=NOTzr, b=NOTng, out=NOTzrng);
+    And(a=outAND, b=NOTzrng, out=outgreater0);
+
+
+    // WRITEM
+    And(a=instruction[15], b=instruction[3], out=writeM);
+
+    // CONTROL BITS FOR LOADING PC
+    Or(a=outng, b=outzr, out=loadzrng);
+    Or(a=loadzrng, b=outgreater0, out=loadjump);
+
+    // PC
+    Not(in=loadjump, out=NOTloadjump);
+    PC(in=Aout,load=loadjump,inc=NOTloadjump,reset=reset,out[0..14]=pc); 
 }
